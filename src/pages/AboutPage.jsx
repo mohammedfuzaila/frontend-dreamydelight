@@ -1,7 +1,25 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../utils/api';
 
 export default function AboutPage() {
+  const [aboutData, setAboutData] = useState({
+    story_title: 'From Our Family to Yours',
+    story_content: "Dreamy Delights began in 2019 as a small home kitchen experiment by our founder, Ayisha Siddiqua. What started as baking cakes for family and friends quickly grew into a beloved local bakery known for its exceptional quality and heartfelt creations.\n\nEvery recipe at Dreamy Delights has been perfected over years of experimentation and love. We believe that the best ingredients create the most memorable experiences, which is why we source only the finest chocolates, freshest fruits, and purest ingredients for our creations.\n\nToday, we're proud to serve our community with the same passion and attention to detail that started it all. Each cake, brownie, and pastry is crafted with care, ensuring every bite brings joy to your special moments.",
+    image_url: '/dd/file_00000000edfc6243a584dc22186cd098.png'
+  });
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/public/about/`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.length > 0) {
+          setAboutData(data[0]);
+        }
+      })
+      .catch(err => console.error("Error fetching about content:", err));
+  }, []);
+
   useEffect(() => {
     document.title = 'About Us | Dreamy Delights';
 
@@ -38,30 +56,15 @@ export default function AboutPage() {
         <div className="container">
           <div className="story-container">
             <div className="story-content">
-              <h2 className="story-title">From Our Family to Yours</h2>
-              <p className="story-text">
-                Dreamy Delights began in 2019 as a small home kitchen experiment
-                by our founder, Ayisha Siddiqua. What started as baking cakes for
-                family and friends quickly grew into a beloved local bakery known
-                for its exceptional quality and heartfelt creations.
-              </p>
-              <p className="story-text">
-                Every recipe at Dreamy Delights has been perfected over years of
-                experimentation and love. We believe that the best ingredients
-                create the most memorable experiences, which is why we source only
-                the finest chocolates, freshest fruits, and purest ingredients for
-                our creations.
-              </p>
-              <p className="story-text">
-                Today, we&apos;re proud to serve our community with the same passion
-                and attention to detail that started it all. Each cake, brownie,
-                and pastry is crafted with care, ensuring every bite brings joy to
-                your special moments.
-              </p>
+              <h2 className="story-title">{aboutData.story_title}</h2>
+              {aboutData.story_content.split('\n').map((paragraph, index) => {
+                if (!paragraph.trim()) return null;
+                return <p key={index} className="story-text">{paragraph}</p>;
+              })}
             </div>
             <div className="story-image">
               <img
-                src="/dd/file_00000000edfc6243a584dc22186cd098.png"
+                src={aboutData.image_url || '/dd/file_00000000edfc6243a584dc22186cd098.png'}
                 alt="Our Bakery Kitchen"
                 className="story-img"
               />

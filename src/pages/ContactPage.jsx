@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../utils/api';
 
-const FAQ_DATA = [
+const DEFAULT_FAQ_DATA = [
   {
     id: 1,
     question: 'How do I place an order?',
@@ -41,6 +42,7 @@ const FAQ_DATA = [
 
 export default function ContactPage() {
   const [openFaq, setOpenFaq] = useState(null);
+  const [faqs, setFaqs] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -48,6 +50,22 @@ export default function ContactPage() {
     message: '',
   });
   const [formStatus, setFormStatus] = useState(null); // 'success' | 'error' | null
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/public/faqs/`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.length > 0) {
+          setFaqs(data);
+        } else {
+          setFaqs(DEFAULT_FAQ_DATA);
+        }
+      })
+      .catch(err => {
+        console.error("Error fetching FAQs:", err);
+        setFaqs(DEFAULT_FAQ_DATA);
+      });
+  }, []);
 
   useEffect(() => {
     document.title = 'Contact Us | Dreamy Delights';
@@ -63,27 +81,29 @@ export default function ContactPage() {
       { threshold: 0.1 }
     );
 
-    document.querySelectorAll('.stagger-item').forEach((el) => observer.observe(el));
+    document.querySelectorAll('.stagger-item, .fade-in').forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, []);
+  }, [faqs]);
 
   const toggleFaq = (id) => {
-    setOpenFaq((prev) => (prev === id ? null : id));
+    setOpenFaq(openFaq === id ? null : id);
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-      const res = await fetch(`${apiUrl}/api/contact/`, {
+      const res = await fetch(`${API_BASE_URL}/contact/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData)
       });
       if (res.ok) {
         setFormStatus('success');
@@ -91,12 +111,10 @@ export default function ContactPage() {
       } else {
         setFormStatus('error');
       }
-    } catch {
-      // Backend may not be running; still show success for demo
-      setFormStatus('success');
-      setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (err) {
+      console.error(err);
+      setFormStatus('error');
     }
-    setTimeout(() => setFormStatus(null), 5000);
   };
 
   return (
@@ -106,8 +124,8 @@ export default function ContactPage() {
         <div className="container">
           <h1 className="page-title">Get in Touch</h1>
           <p className="page-subtitle">
-            Have a question or want to place a custom order? We&apos;d love to hear
-            from you!
+            We&apos;d love to hear from you. Reach out for custom orders,
+            feedback, or any sweet queries!
           </p>
         </div>
       </section>
@@ -115,100 +133,56 @@ export default function ContactPage() {
       {/* Contact Section */}
       <section className="contact-section">
         <div className="container">
-          <div className="contact-container">
-            {/* Contact Info */}
-            <div className="contact-info">
-              <h2 className="contact-title">Let&apos;s Connect</h2>
-              <p className="contact-text">
-                Whether you have a question about our products, want to place a
-                custom order, or just want to say hello — we&apos;re here for you!
+          <div className="contact-grid">
+            <div className="contact-info stagger-item">
+              <h2>Contact Information</h2>
+              <p>
+                Ready to make your life sweeter? Contact us directly or use the
+                form to send a message.
               </p>
 
-              <div className="contact-methods">
-                <div className="contact-method stagger-item">
-                  <div className="method-icon">
-                    <i className="fas fa-map-marker-alt"></i>
-                  </div>
-                  <div className="method-details">
-                    <h3>Our Location</h3>
-                    <p>Lal Mosque street, Pernambut</p>
-                    <p>Tamil Nadu, India</p>
-                  </div>
+              <div className="info-item">
+                <i className="fas fa-phone-alt info-icon"></i>
+                <div className="info-details">
+                  <h4>Phone / WhatsApp</h4>
+                  <p>+91 9363065609</p>
+                  <p>+91 9500473215</p>
                 </div>
+              </div>
 
-                <div className="contact-method stagger-item">
-                  <div className="method-icon">
-                    <i className="fas fa-phone"></i>
-                  </div>
-                  <div className="method-details">
-                    <h3>Phone / WhatsApp</h3>
-                    <p>(+91) 90423 60621</p>
-                    <a href="https://wa.me/919042360621" className="method-link" target="_blank" rel="noreferrer">
-                      Chat on WhatsApp →
-                    </a>
-                  </div>
+              <div className="info-item">
+                <i className="fas fa-envelope info-icon"></i>
+                <div className="info-details">
+                  <h4>Email</h4>
+                  <p>fuzail@dreamydelights.com</p>
                 </div>
+              </div>
 
-                <div className="contact-method stagger-item">
-                  <div className="method-icon">
-                    <i className="fas fa-envelope"></i>
-                  </div>
-                  <div className="method-details">
-                    <h3>Email Us</h3>
-                    <p>dreamydelights@gmail.com</p>
-                    <a href="mailto:dreamydelights@gmail.com" className="method-link">
-                      Send an email →
-                    </a>
-                  </div>
+              <div className="info-item">
+                <i className="fas fa-map-marker-alt info-icon"></i>
+                <div className="info-details">
+                  <h4>Location</h4>
+                  <p>Lal Mosque street</p>
+                  <p>Pernambut, Tamil Nadu, India</p>
                 </div>
+              </div>
 
-                <div className="contact-method stagger-item">
-                  <div className="method-icon">
-                    <i className="fas fa-clock"></i>
-                  </div>
-                  <div className="method-details">
-                    <h3>Working Hours</h3>
-                    <p>Mon – Sun: 8AM – 10PM</p>
-                    <p>We&apos;re open every day!</p>
-                  </div>
-                </div>
+              <div className="social-links-contact">
+                <a href="#" className="social-icon"><i className="fab fa-instagram"></i></a>
+                <a href="#" className="social-icon"><i className="fab fa-facebook-f"></i></a>
+                <a href="#" className="social-icon"><i className="fab fa-whatsapp"></i></a>
               </div>
             </div>
 
-            {/* Contact Form */}
-            <div className="contact-form">
-              <h3 className="form-title">Send a Message</h3>
-
+            <div className="contact-form-container stagger-item">
+              <h2>Send us a Message</h2>
               {formStatus === 'success' && (
-                <div
-                  style={{
-                    background: '#9DD9A5',
-                    color: 'white',
-                    padding: '15px',
-                    borderRadius: '8px',
-                    marginBottom: '20px',
-                    textAlign: 'center',
-                  }}
-                >
-                  <i className="fas fa-check-circle"></i>&nbsp; Message sent! We&apos;ll get back to you soon.
-                </div>
+                <div className="alert alert-success">Your message has been sent! We will get back to you soon.</div>
               )}
               {formStatus === 'error' && (
-                <div
-                  style={{
-                    background: '#FF9AA2',
-                    color: 'white',
-                    padding: '15px',
-                    borderRadius: '8px',
-                    marginBottom: '20px',
-                    textAlign: 'center',
-                  }}
-                >
-                  <i className="fas fa-exclamation-circle"></i>&nbsp; Something went wrong. Please try WhatsApp instead.
-                </div>
+                <div className="alert alert-error">Failed to send message. Please try again.</div>
               )}
-
-              <form onSubmit={handleSubmit}>
+              <form className="contact-form" onSubmit={handleSubmit}>
                 <div className="form-group">
                   <label className="form-label" htmlFor="name">Your Name</label>
                   <input
@@ -218,7 +192,7 @@ export default function ContactPage() {
                     value={formData.name}
                     onChange={handleChange}
                     className="form-control"
-                    placeholder="Enter your name"
+                    placeholder="John Doe"
                     required
                   />
                 </div>
@@ -232,7 +206,7 @@ export default function ContactPage() {
                     value={formData.email}
                     onChange={handleChange}
                     className="form-control"
-                    placeholder="Enter your email"
+                    placeholder="john@example.com"
                     required
                   />
                 </div>
@@ -246,7 +220,8 @@ export default function ContactPage() {
                     value={formData.subject}
                     onChange={handleChange}
                     className="form-control"
-                    placeholder="What is this about?"
+                    placeholder="Order Inquiry"
+                    required
                   />
                 </div>
 
@@ -291,7 +266,7 @@ export default function ContactPage() {
         <div className="container">
           <h2 className="about-section-title">Frequently Asked Questions</h2>
           <div className="faq-container">
-            {FAQ_DATA.map((faq, index) => (
+            {faqs.map((faq, index) => (
               <div key={faq.id} className={`faq-item stagger-item${openFaq === faq.id ? ' open' : ''}`} style={{ transitionDelay: `${index * 0.1}s` }}>
                 <button
                   className="faq-question"

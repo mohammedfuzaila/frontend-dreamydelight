@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Carousel from '../components/Carousel';
 import StatsCounter from '../components/StatsCounter';
@@ -22,6 +22,42 @@ export default function HomePage() {
 
     document.querySelectorAll('.fade-in, .stagger-item').forEach((el) => observer.observe(el));
     return () => observer.disconnect();
+  }, []);
+
+  const [testimonials, setTestimonials] = useState([]);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/public/testimonials/`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.length > 0) {
+          setTestimonials(data);
+        } else {
+          setTestimonials([
+            {
+              id: 't1',
+              content: "The best chocolate cake I've ever had! Moist, rich, and perfectly sweet. Will definitely order again for my next celebration.",
+              author_name: "Anaikar fuzail",
+              author_role: "Regular Customer"
+            },
+            {
+              id: 't2',
+              content: "Their kunafa is absolutely authentic and delicious. It reminds me of my grandmother's recipe. Highly recommended!",
+              author_name: "Mohd Rimaaz",
+              author_role: "Food Blogger"
+            },
+            {
+              id: 't3',
+              content: "I ordered the marriage packing for my sister's wedding, and it was beautifully presented. The sweets were fresh and tasted amazing.",
+              author_name: "Mohd Aamiz",
+              author_role: "Wedding Planner"
+            }
+          ]);
+        }
+      })
+      .catch(err => {
+        console.error("Error fetching testimonials:", err);
+      });
   }, []);
 
   return (
@@ -107,44 +143,19 @@ export default function HomePage() {
         <div className="container">
           <h2 className="section-title fade-in">What Our Customers Say</h2>
           <div className="testimonial-grid fade-in">
-            <div className="testimonial-card stagger-item">
-              <p className="testimonial-text">
-                &ldquo;The best chocolate cake I&apos;ve ever had! Moist, rich, and perfectly
-                sweet. Will definitely order again for my next celebration.&rdquo;
-              </p>
-              <div className="testimonial-author">
-                <div className="author-info">
-                  <h4>Anaikar fuzail</h4>
-                  <p>Regular Customer</p>
+            {testimonials.map(t => (
+              <div key={t.id} className="testimonial-card stagger-item">
+                <p className="testimonial-text">
+                  &ldquo;{t.content}&rdquo;
+                </p>
+                <div className="testimonial-author">
+                  <div className="author-info">
+                    <h4>{t.author_name}</h4>
+                    <p>{t.author_role}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div className="testimonial-card stagger-item">
-              <p className="testimonial-text">
-                &ldquo;Their kunafa is absolutely authentic and delicious. It reminds me of my
-                grandmother&apos;s recipe. Highly recommended!&rdquo;
-              </p>
-              <div className="testimonial-author">
-                <div className="author-info">
-                  <h4>Mohd Rimaaz</h4>
-                  <p>Food Blogger</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="testimonial-card stagger-item">
-              <p className="testimonial-text">
-                &ldquo;I ordered the marriage packing for my sister&apos;s wedding, and it was
-                beautifully presented. The sweets were fresh and tasted amazing.&rdquo;
-              </p>
-              <div className="testimonial-author">
-                <div className="author-info">
-                  <h4>Mohd Aamiz</h4>
-                  <p>Wedding Planner</p>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
