@@ -24,7 +24,10 @@ export default function AdminLayout({ children }) {
     <div className="admin-layout">
       <aside className="admin-sidebar">
         <div className="admin-brand">
-          <h2>Dreamy Delight</h2>
+          <h2>
+            <span className="brand-full">Dreamy Delight</span>
+            <span className="brand-mini">DD</span>
+          </h2>
           <p>Admin Panel</p>
         </div>
         <nav className="admin-nav">
@@ -35,13 +38,13 @@ export default function AdminLayout({ children }) {
                   to={link.path} 
                   className={location.pathname === link.path ? 'active' : ''}
                 >
-                  <i className={link.icon}></i> {link.label}
+                  <i className={link.icon}></i> <span>{link.label}</span>
                 </Link>
               </li>
             ))}
             <li>
               <button onClick={handleLogout} className="logout-btn">
-                <i className="fas fa-sign-out-alt"></i> Logout
+                <i className="fas fa-sign-out-alt"></i> <span>Logout</span>
               </button>
             </li>
           </ul>

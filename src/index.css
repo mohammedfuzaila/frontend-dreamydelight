@@ -1586,6 +1586,7 @@ textarea.form-control {
   .cta-title { font-size: 2rem; }
   .contact-method { flex-direction: column; text-align: center; gap: 15px; }
   .contact-form { padding: 30px 25px; }
+  footer { padding-bottom: 100px; }
 }
 
 @media (max-width: 576px) {
@@ -2121,6 +2122,10 @@ html {
   letter-spacing: 1px;
 }
 
+.brand-mini {
+  display: none;
+}
+
 .admin-brand p {
   color: #94a3b8;
   font-size: 0.85rem;
@@ -2581,10 +2586,43 @@ html {
 
 @media (max-width: 768px) {
   .form-row { flex-direction: column; gap: 0; }
-  .admin-sidebar { width: 80px; }
-  .admin-nav a span { display: none; }
-  .admin-brand h2 { font-size: 1rem; }
+  .admin-sidebar { width: 70px; }
+  .brand-full { display: none; }
+  .brand-mini { display: inline; }
   .admin-brand p { display: none; }
+  .admin-brand { padding: 20px 5px; }
+  
+  .admin-nav a, .logout-btn {
+    justify-content: center;
+    padding: 14px 0;
+  }
+  .admin-nav a i, .logout-btn i {
+    margin-right: 0;
+  }
+  .admin-nav a span, .logout-btn span {
+    display: none;
+  }
+
+  .admin-header {
+    padding: 15px 20px;
+  }
+  .admin-content-inner {
+    padding: 20px 15px;
+  }
+  .admin-header-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .admin-filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 15px;
+  }
+  .admin-select {
+    min-width: 100%;
+  }
 }
 
 .flex-1 { flex: 1; width: 100%; }
