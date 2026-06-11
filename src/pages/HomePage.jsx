@@ -4,6 +4,7 @@ import Carousel from '../components/Carousel';
 import StatsCounter from '../components/StatsCounter';
 import HowItWorks from '../components/HowItWorks';
 import { featuredProducts } from '../data/products';
+import { API_BASE_URL } from '../utils/api';
 
 export default function HomePage() {
   useEffect(() => {
@@ -24,7 +25,28 @@ export default function HomePage() {
     return () => observer.disconnect();
   }, []);
 
-  const [testimonials, setTestimonials] = useState([]);
+  const DEFAULT_TESTIMONIALS = [
+    {
+      id: 't1',
+      content: "The best chocolate cake I've ever had! Moist, rich, and perfectly sweet. Will definitely order again for my next celebration.",
+      author_name: "Anaikar fuzail",
+      author_role: "Regular Customer"
+    },
+    {
+      id: 't2',
+      content: "Their kunafa is absolutely authentic and delicious. It reminds me of my grandmother's recipe. Highly recommended!",
+      author_name: "Mohd Rimaaz",
+      author_role: "Food Blogger"
+    },
+    {
+      id: 't3',
+      content: "I ordered the marriage packing for my sister's wedding, and it was beautifully presented. The sweets were fresh and tasted amazing.",
+      author_name: "Mohd Aamiz",
+      author_role: "Wedding Planner"
+    }
+  ];
+
+  const [testimonials, setTestimonials] = useState(DEFAULT_TESTIMONIALS);
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/public/testimonials/`)
@@ -33,30 +55,12 @@ export default function HomePage() {
         if (data && data.length > 0) {
           setTestimonials(data);
         } else {
-          setTestimonials([
-            {
-              id: 't1',
-              content: "The best chocolate cake I've ever had! Moist, rich, and perfectly sweet. Will definitely order again for my next celebration.",
-              author_name: "Anaikar fuzail",
-              author_role: "Regular Customer"
-            },
-            {
-              id: 't2',
-              content: "Their kunafa is absolutely authentic and delicious. It reminds me of my grandmother's recipe. Highly recommended!",
-              author_name: "Mohd Rimaaz",
-              author_role: "Food Blogger"
-            },
-            {
-              id: 't3',
-              content: "I ordered the marriage packing for my sister's wedding, and it was beautifully presented. The sweets were fresh and tasted amazing.",
-              author_name: "Mohd Aamiz",
-              author_role: "Wedding Planner"
-            }
-          ]);
+          setTestimonials(DEFAULT_TESTIMONIALS);
         }
       })
       .catch(err => {
         console.error("Error fetching testimonials:", err);
+        setTestimonials(DEFAULT_TESTIMONIALS);
       });
   }, []);
 
